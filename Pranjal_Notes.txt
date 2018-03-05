@@ -1,0 +1,4 @@
+I started thinking about how to setup this model and my suggestions are pranjal's jupyter notebook, Also Mesa already has the wolf-sheep
+model as one of their examples, so I will be making some scripts that are heavily based on them with some additions.
+
+I have made some scripts that should have the templates for how the classes should run and some of how they interact
