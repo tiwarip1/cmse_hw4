@@ -2,3 +2,7 @@ I started thinking about how to setup this model and my suggestions are pranjal'
 model as one of their examples, so I will be making some scripts that are heavily based on them with some additions.
 
 I have made some scripts that should have the templates for how the classes should run and some of how they interact
+
+I have made most of the scripts necessary and all you need to do is run the main_board file to get a colormap of the stuff on the board
+It is pretty well documented, so you should just be able to understand what's going on from reading them, if it doesn't make sense look
+at the Wolf-Sheep example from mesa, they are similar, but not exactly the same
