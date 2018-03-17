@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from mesa import Model
 from mesa.time import RandomActivation
 from mesa.space import MultiGrid,Grid
-from Entities import Spartan,Wolverine
+from Entities import Spartan,Wolverine,Buckeye
 
 '''
 This model is derived from the scripts in the wolf-sheep model in the mesa
@@ -13,18 +13,19 @@ examples, but has been heavily modified, so we did do something
 '''
 
 class board(Model):
-    
-    def __init__(self,num_wolverines,num_spartans,height = 40, width = 40):
+
+    def __init__(self,num_wolverines,num_spartans,num_buckeyes, height = 40, width = 40):
         '''Initializes the board and randomly puts spartans and wolverines in
         the board. This uses a multigrid and rolling boundary conditions'''
         self.num_wolverines = num_wolverines
         self.num_spartans = num_spartans
+        self.num_buckeyes = num_buckeyes
         self.height = height
         self.width = width
-        
+
         self.grid = MultiGrid(self.height, self.width,torus = True)
         self.schedule = RandomActivation(self)
-        
+
         #Creates Wolverines
         for i in range(self.num_wolverines):
             x = random.randrange(self.width)
@@ -40,23 +41,31 @@ class board(Model):
             spartan = Spartan((x, y), self)
             self.grid.place_agent(spartan, (x, y))
             self.schedule.add(spartan)
-            
+
+         # Create Buckeyes
+        for i in range(self.num_spartans):
+            x = random.randrange(self.width)
+            y = random.randrange(self.height)
+            buckeye = Buckeye((x, y), self)
+            self.grid.place_agent(buckeye, (x, y))
+            self.schedule.add(buckeye)
+
         self.running = True
-        
+
     def step(self):
         '''Goes through the step functions found in the agents'''
-        
+
         self.schedule.step()
-        
+
     def run_model(self,num_iterations):
         '''Just iterates over the step for a given number of times and shows
         the colormap, this is mostly just for testing and the final result
         should include animation'''
-        
+
         for i in range(num_iterations):
             self.step()
             self.print_model()
-            
+
     def print_model(self):
         '''This function prints and does some operations in the function,
         specifically it goes through each square and if a wolverine and
@@ -69,10 +78,10 @@ class board(Model):
             cell_content, x, y = cell
             self.total_count+=len(cell_content)
             cell_cont = list(cell_content)
-            #This is statement goes through each cell and sees if there is a 
+            #This is statement goes through each cell and sees if there is a
             #spartan and wolverine in the same square, then initiates combat
             if cell_cont!=[]:
-                #Have the class objects return their name and if it meets the 
+                #Have the class objects return their name and if it meets the
                 #criteria, moves to combat
                 if any(x.name() == "Spartan" for x in cell_cont) and \
                 any(x.name() == "Wolverine" for x in cell_cont):
@@ -88,15 +97,43 @@ class board(Model):
                                 i.wolverine_killed()
                                 print('A wolverine has just been killed')
                                 break
+                if any(x.name() == "Buckeye" for x in cell_cont) and \
+                any(x.name() == "Wolverine" for x in cell_cont):
+                    killed = False
+                    for j in cell_content:
+                        if j.name()=="Buckeye":
+                            killed = j.kill_wolverine()
+                            break
+                    if killed:
+                        for i in cell_content:
+                            if i.name() == "Wolverine":
+                                j.add_food_from_kill(i.food_contents())
+                                i.wolverine_killed()
+                                print('A wolverine has just been killed')
+                                break
+                if any(x.name() == "Spartan" for x in cell_cont) and \
+                any(x.name() == "Buckeye" for x in cell_cont):
+                    killed = False
+                    for j in cell_content:
+                        if j.name()=="Spartan":
+                            killed = j.kill_wolverine()
+                            break
+                    if killed:
+                        for i in cell_content:
+                            if i.name() == "Buckeye":
+                                j.add_food_from_kill(i.food_contents())
+                                i.buckeye_killed()
+                                print('A buckeye has just been killed')
+                                break
+
             agent_count = len(cell_content)
             agent_counts[x][y] = agent_count
         print(self.total_count)
         plt.imshow(agent_counts, interpolation='nearest')
         plt.colorbar()
-    
+
         plt.show()
-        
+
 #This is here to make sure the model works by making a colormap of it
-model = board(20,20,5,5)
+model = board(20,20,20,5,5)
 model.run_model(5)
-    
