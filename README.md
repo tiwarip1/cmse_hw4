@@ -3,7 +3,7 @@ This is a repository for collaborating on HW 4
 
 March - 4
 
-Pranjal: 
+Pranjal:
 Created the skeleton files including the entities.py file with pseudo code in it to say what it will do
 Created the move functions for spartans and wolverines and a small amount of code for them
 
@@ -17,3 +17,7 @@ Created random_walk.py by creating the function __init__, random_move in the Ran
 Removed the move_spartan.py and move_wolverine.py files
 
 At this point, the board is created, the spartans and wolverines can move in them randomly, spartans can kill wolverines in the same square as them, both can give birth and die of old age
+
+Cameron- March 17
+
+Added Buckeyes to the model. They are preyed upon by the Spartans but Prey on the Wolverines. Visualization completion is still needed at this time
